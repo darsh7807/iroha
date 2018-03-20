@@ -44,18 +44,17 @@ namespace iroha {
        * @param data - raw presenetation of block
        * @return object if operation done successfully, nullopt otherwise
        */
-      boost::optional<model::Block> parseBlock(std::string data);
+      boost::optional<std::shared_ptr<shared_model::interface::Block>> parseBlock(const std::string &data);
 
       /**
-       * Additional method
        * Loading file from target path
        * @param path - target file
-       * @return string with content or nullopt
+       * @return string with file content or nullopt
        */
       boost::optional<std::string> loadFile(std::string path);
 
      private:
-      model::converters::JsonBlockFactory block_factory_;
+//      model::converters::JsonBlockFactory block_factory_;
 
       logger::Logger log_;
     };

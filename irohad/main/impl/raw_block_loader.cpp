@@ -16,23 +16,24 @@
  */
 
 #include "main/raw_block_loader.hpp"
+#include <exception>
 #include <fstream>
-#include <utility>
-#include "common/types.hpp"
-#include "model/converters/json_common.hpp"
+#include "converters/protobuf/json_proto_converter.hpp"
 
 namespace iroha {
   namespace main {
 
+    using shared_model::converters::protobuf::jsonToProto;
+
     BlockLoader::BlockLoader() : log_(logger::log("BlockLoader")) {}
 
-    boost::optional<model::Block> BlockLoader::parseBlock(std::string data) {
-      auto document = model::converters::stringToJson(data);
-      if (not document) {
-        log_->error("Blob parsing failed");
-        return boost::none;
-      }
-      return block_factory_.deserialize(document.value());
+    boost::optional<std::shared_ptr<shared_model::interface::Block>>
+    BlockLoader::parseBlock(const std::string &data) {
+      return jsonToProto<iroha::protocol::Block>(data) | [](auto &&block) {
+        return boost::make_optional(std::shared_ptr<shared_model::interface::Block>(
+            new shared_model::proto::Block(block)
+        ));
+      };
     }
 
     boost::optional<std::string> BlockLoader::loadFile(std::string path) {

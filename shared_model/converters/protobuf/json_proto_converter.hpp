@@ -56,6 +56,7 @@ namespace shared_model {
         if (status.ok()) {
           return result;
         }
+        auto str = status.ToString();
         return boost::none;
       }
 
